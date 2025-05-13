@@ -35,7 +35,30 @@ mongoose.connect
     ).catch((error) =>
         console.log('error')
     )
+app.get('/', (req, res) => {
+    res.json({ 
+        message: 'Social Media API Server',
+        status: 'Running',
+        endpoints: {
+            auth: '/auth',
+            user: '/user',
+            post: '/post',
+            upload: '/upload',
+            chat: '/chat',
+            message: '/message',
+            notification: '/notification'
+        }
+    });
+});
 
+// Health check endpoint
+app.get('/health', (req, res) => {
+    res.status(200).json({ 
+        status: 'healthy',
+        timestamp: new Date().toISOString(),
+        uptime: process.uptime()
+    });
+});
 
 // uses of routes
 

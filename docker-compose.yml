@@ -1,0 +1,42 @@
+version: '3.8'
+
+services:
+  server:
+    build: ./Server
+    container_name: social-media-server
+    ports:
+      - "4000:4000"
+    environment:
+      - MONGO_DB=${MONGO_DB}
+      - JWT_KEY=${JWT_KEY}
+      - PORT=4000
+    volumes:
+      - ./Server/public:/app/public
+    networks:
+      - social-network
+
+  client:
+    build: ./client
+    container_name: social-media-client
+    ports:
+      - "3000:80"
+    depends_on:
+      - server
+    networks:
+      - social-network
+
+  socket:
+    build: ./Server
+    container_name: social-media-socket
+    ports:
+      - "8800:8800"
+    command: node socket/index.js
+    environment:
+      - MONGO_DB=${MONGO_DB}
+      - JWT_KEY=${JWT_KEY}
+    networks:
+      - social-network
+
+networks:
+  social-network:
+    driver: bridge
