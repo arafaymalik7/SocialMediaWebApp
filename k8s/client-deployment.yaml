@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: client-deployment
+  namespace: social-media
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: social-media-client
+  template:
+    metadata:
+      labels:
+        app: social-media-client
+    spec:
+      containers:
+      - name: client
+        image: rafaymalik7/social-media-client:latest
+        ports:
+        - containerPort: 80
+        resources:
+          limits:
+            memory: "256Mi"
+            cpu: "200m"
+          requests:
+            memory: "128Mi"
+            cpu: "100m"

@@ -1,0 +1,114 @@
+name: Build and Deploy to Minikube
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build-and-deploy:
+    runs-on: self-hosted
+    
+    steps:
+    # Step 1: Checkout the code
+    - name: Checkout code
+      uses: actions/checkout@v3
+    
+    # Step 2: Setup Docker to use Minikube's daemon
+    - name: Configure Docker for Minikube
+      run: |
+        echo "Setting up Docker to use Minikube's daemon..."
+        eval $(minikube docker-env)
+        echo "Docker is now using Minikube's daemon"
+    
+    # Step 3: Build Docker images
+    - name: Build Server Docker image
+      run: |
+        echo "Building server image..."
+        cd Server
+        docker build -t ${{ secrets.DOCKER_USERNAME }}/social-media-server:latest .
+        cd ..
+    
+    - name: Build Client Docker image  
+      run: |
+        echo "Building client image..."
+        cd client
+        docker build -t ${{ secrets.DOCKER_USERNAME }}/social-media-client:latest .
+        cd ..
+    
+    # Step 4: Login to Docker Hub
+    - name: Login to Docker Hub
+      run: |
+        echo "Logging into Docker Hub..."
+        echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
+    
+    # Step 5: Push images to Docker Hub
+    - name: Push Server Image to Docker Hub
+      run: |
+        echo "Pushing server image to Docker Hub..."
+        docker push ${{ secrets.DOCKER_USERNAME }}/social-media-server:latest
+    
+    - name: Push Client Image to Docker Hub
+      run: |
+        echo "Pushing client image to Docker Hub..."
+        docker push ${{ secrets.DOCKER_USERNAME }}/social-media-client:latest
+    
+    # Step 6: Create Kubernetes namespace
+    - name: Create Kubernetes namespace
+      run: |
+        echo "Creating namespace if it doesn't exist..."
+        kubectl create namespace social-media --dry-run=client -o yaml | kubectl apply -f -
+    
+    # Step 7: Create Kubernetes secrets
+    - name: Create Kubernetes secrets
+      run: |
+        echo "Creating secrets..."
+        kubectl delete secret social-media-secrets -n social-media --ignore-not-found
+        kubectl create secret generic social-media-secrets \
+          --from-literal=mongo-db="${{ secrets.MONGO_DB }}" \
+          --from-literal=jwt-key="${{ secrets.JWT_KEY }}" \
+          --namespace=social-media
+    
+    # Step 8: Update Kubernetes deployments with new images
+    - name: Update deployment images
+      run: |
+        echo "Updating Kubernetes deployments with new images..."
+        # Update server deployment
+        kubectl set image deployment/server-deployment \
+          server=${{ secrets.DOCKER_USERNAME }}/social-media-server:latest \
+          -n social-media
+        
+        # Update client deployment
+        kubectl set image deployment/client-deployment \
+          client=${{ secrets.DOCKER_USERNAME }}/social-media-client:latest \
+          -n social-media
+        
+    
+    # Step 9: Apply all Kubernetes manifests
+    - name: Deploy to Minikube
+      run: |
+        echo "Applying Kubernetes manifests..."
+        kubectl apply -f k8s/namespace.yaml
+        kubectl apply -f k8s/server-deployment.yaml
+        kubectl apply -f k8s/server-service.yaml
+        kubectl apply -f k8s/client-deployment.yaml
+        kubectl apply -f k8s/client-service.yaml
+    
+    # Step 10: Wait for deployments to be ready
+    - name: Wait for deployments
+      run: |
+        echo "Waiting for deployments to be ready..."
+        kubectl wait --for=condition=available --timeout=300s deployment/server-deployment -n social-media
+        kubectl wait --for=condition=available --timeout=300s deployment/client-deployment -n social-media
+    
+    # Step 11: Show deployment status
+    - name: Show deployment status
+      run: |
+        echo "Deployment status:"
+        kubectl get all -n social-media
+        echo ""
+        echo "Service URLs:"
+        minikube service list -n social-media
