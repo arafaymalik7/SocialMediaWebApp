@@ -1,0 +1,45 @@
+.CommentSection {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    padding: 1rem;
+    background-color: var(--inputColor);
+    border-radius: 0.5rem;
+}
+
+.comment-input {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.comment-input > img {
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 50%;
+}
+
+.comment-input > form {
+    display: flex;
+    flex: 1;
+    gap: 0.5rem;
+}
+
+.comment-input input {
+    flex: 1;
+    background-color: white;
+    border: none;
+    outline: none;
+    padding: 0.5rem;
+    border-radius: 0.5rem;
+}
+
+.comment-button {
+    padding: 0.5rem 1rem;
+    font-size: 14px;
+}
+
+.comments-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}

@@ -1,0 +1,50 @@
+.NotificationPanel {
+    position: absolute;
+    top: 3rem;  /* Changed from 100% */
+    right: 0;
+    width: 350px;  /* Reduced width */
+    max-height: 400px;  /* Reduced height */
+    background-color: white;
+    border-radius: 1rem;
+    box-shadow: var(--profileShadow);
+    z-index: 1000;  /* Increased z-index */
+    display: flex;
+    flex-direction: column;
+}
+
+.notification-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem;
+    border-bottom: 1px solid var(--hrColor);
+}
+
+.notification-header h3 {
+    margin: 0;
+}
+
+.mark-all-read {
+    background: none;
+    border: none;
+    color: var(--purplePain);
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.close-panel {
+    font-size: 24px;
+    cursor: pointer;
+    color: var(--gray);
+}
+
+.notification-list {
+    flex: 1;
+    overflow-y: auto;
+}
+
+.loading, .no-notifications {
+    text-align: center;
+    padding: 2rem;
+    color: var(--gray);
+}

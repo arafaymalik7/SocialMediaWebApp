@@ -1,0 +1,18 @@
+.Chat {
+    display: grid;
+    grid-template-columns: 22% auto;
+    gap: 1rem;
+    height: calc(100vh - 2rem);
+}
+
+.Left-side-chat {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.Right-side-chat {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}

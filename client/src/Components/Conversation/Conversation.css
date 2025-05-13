@@ -1,0 +1,15 @@
+.Conversation {
+    padding: 0.5rem;
+    cursor: pointer;
+}
+
+.Conversation:hover {
+    background-color: var(--inputColor);
+    border-radius: 0.5rem;
+}
+
+.Conversation > hr {
+    width: 90%;
+    margin-top: 10px;
+    border: 0.1px solid var(--hrColor);
+}

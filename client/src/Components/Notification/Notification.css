@@ -1,0 +1,66 @@
+.Notification {
+    display: flex;
+    align-items: center;
+    padding: 1rem;
+    cursor: pointer;
+    position: relative;
+    border-radius: 0.5rem;
+    transition: background-color 0.3s;
+}
+
+.Notification:hover {
+    background-color: var(--inputColor);
+}
+
+.Notification.unread {
+    background-color: rgba(102, 116, 204, 0.1);
+}
+
+.notification-content {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    text-decoration: none;
+    color: inherit;
+    flex: 1;
+}
+
+.notification-avatar {
+    width: 3rem;
+    height: 3rem;
+    border-radius: 50%;
+}
+
+.notification-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.notification-text {
+    font-size: 14px;
+}
+
+.notification-time {
+    font-size: 12px;
+    color: var(--gray);
+}
+
+.notification-dot {
+    width: 8px;
+    height: 8px;
+    background-color: var(--buttonBg);
+    border-radius: 50%;
+    position: absolute;
+    right: 1rem;
+}
+
+.delete-notification {
+    font-size: 20px;
+    color: var(--gray);
+    padding: 0 0.5rem;
+}
+
+.delete-notification:hover {
+    color: red;
+}
